@@ -309,8 +309,3 @@ typedef NS_ENUM(NSUInteger, GestureSection) {
 - (void)setTitle:(NSString *)title;
 - (void)setHandler:(void (^)(id))handler;
 @end
-
-@interface GOOHUDManagerInternal : NSObject
-- (void)showMessageMainThread:(id)message;
-+ (id)sharedInstance;
-@end
