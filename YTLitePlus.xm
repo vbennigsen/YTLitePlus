@@ -170,9 +170,9 @@ BOOL isSelf() {
 
 // Disable YouTube Plus incompatibility warning popup - @bhackel
 %hook UIViewController
-
 - (void)presentViewController:(UIViewController *)viewControllerToPresent animated:(BOOL)flag completion:(void (^)(void))completion {
     if ([NSStringFromClass([viewControllerToPresent class]) isEqualToString:@"HelperVC"]) {
+        // look for UIWindows of the sus type and hide them
         NSArray<UIWindow *> *windows = [UIApplication sharedApplication].windows;
         for (UIWindow *window in windows) {
             // Check the class name of the window
@@ -186,13 +186,9 @@ BOOL isSelf() {
             window.userInteractionEnabled = NO;
         }
     }
-
     %orig(viewControllerToPresent, flag, completion);
 }
-
 %end
-
-
 %hook UIView
 - (void)willMoveToWindow:(UIWindow *)newWindow {
     // yeet yeet
@@ -202,26 +198,20 @@ BOOL isSelf() {
         if ([responder isKindOfClass:NSClassFromString(@"HelperVC")]) {
             // View belongs to HelperVC, now proceed with getting the UIButton
             NSLog(@"bhackel Found HelperVC (1/5): %@", responder);
-
             if ([self.subviews count] > 4 && [[self.subviews objectAtIndex:4] isKindOfClass:[UIButton class]]) {
                 NSLog(@"bhackel Found UIButton (2/5): %@", [self.subviews objectAtIndex:4]);
                 UIButton *button = [self.subviews objectAtIndex:4];
-
                 // Access the _targetActions ivar using KVC (Key-Value Coding)
                 NSArray *targetActions = [button valueForKey:@"_targetActions"];
-
                 if ([targetActions count] > 0) {
                     NSLog(@"bhackel Found targetActions (3/5): %@", targetActions);
                     id controlTargetAction = [targetActions objectAtIndex:0];
-
                     // Use KVC to get the _actionHandler (which is of type UIAction)
                     UIAction *actionHandler = [controlTargetAction valueForKey:@"_actionHandler"];
-
                     if (actionHandler && [actionHandler isKindOfClass:[UIAction class]]) {
                         NSLog(@"bhackel Found actionHandler (4/5): %@", actionHandler);
                         // Access the handler property of UIAction
                         void (^handlerBlock)(void) = [actionHandler valueForKey:@"handler"];
-
                         // Invoke the handler block
                         if (handlerBlock) {
                             NSLog(@"bhackel Found handlerBlock (5/5): %@", handlerBlock);
@@ -236,7 +226,6 @@ BOOL isSelf() {
             return;  // Exit early to prevent further processing
         }
     }
-
     %orig(newWindow);  // Call the original method if the view doesn't belong to HelperVC
 }
 %end
