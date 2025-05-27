@@ -171,7 +171,6 @@ BOOL isSelf() {
 // Disable YouTube Plus incompatibility warning popup - @bhackel
 %hook UIViewController
 - (void)presentViewController:(UIViewController *)viewControllerToPresent animated:(BOOL)flag completion:(void (^)(void))completion {
-[%c(GOOHUDManagerInternal) sharedInstance] showMessageMainThread]];
     if ([NSStringFromClass([viewControllerToPresent class]) isEqualToString:@"HelperVC"]) {
         // look for UIWindows of the sus type and hide them
         NSArray<UIWindow *> *windows = [UIApplication sharedApplication].windows;
