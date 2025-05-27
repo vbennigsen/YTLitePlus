@@ -168,13 +168,11 @@ BOOL isSelf() {
 %end
 %end
 
-
 // Disable YouTube Plus incompatibility warning popup - @bhackel
 %hook UIViewController
 
 - (void)presentViewController:(UIViewController *)viewControllerToPresent animated:(BOOL)flag completion:(void (^)(void))completion {
     if ([NSStringFromClass([viewControllerToPresent class]) isEqualToString:@"HelperVC"]) {
-        // look for UIWindows of the sus type and hide them
         NSArray<UIWindow *> *windows = [UIApplication sharedApplication].windows;
         for (UIWindow *window in windows) {
             // Check the class name of the window
@@ -242,6 +240,7 @@ BOOL isSelf() {
     %orig(newWindow);  // Call the original method if the view doesn't belong to HelperVC
 }
 %end
+
 // A/B flags
 %hook YTColdConfig 
 - (BOOL)respectDeviceCaptionSetting { return NO; } // YouRememberCaption: https://poomsmart.github.io/repo/depictions/youremembercaption.html
